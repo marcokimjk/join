@@ -2,51 +2,48 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>2025 낙동 캠프 일정 달력</title>
+  <title>일정표</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
-  <!-- FullCalendar CSS & JS -->
-  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.css" rel="stylesheet">
+
+  <!-- FullCalendar -->
+  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.css" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
 
-  <!-- Firebase SDK -->
+  <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js"></script>
 
   <style>
     body {
       font-family: sans-serif;
-      background: #f9f9f9;
-      padding: 20px;
+      background: #f2f2f2;
+      margin: 0;
+      padding: 0;
     }
     h2 {
       text-align: center;
+      margin-top: 30px;
       color: #333;
     }
     #calendar {
       max-width: 900px;
-      margin: 30px auto;
+      margin: 20px auto;
       background: white;
       padding: 10px;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.05);
+      border-radius: 10px;
     }
   </style>
 </head>
 <body>
 
-  <h2>2025 낙동 여름 캠프 일정</h2>
+  <h2>일정표</h2>
   <div id="calendar"></div>
 
   <script>
-    // 🔐 Firebase 설정
     const firebaseConfig = {
       apiKey: "AIzaSyAOcSy7hE3jX-ajDLUuU_J7q7TjJtqh24s",
       authDomain: "nd01-60afe.firebaseapp.com",
-      projectId: "nd01-60afe",
-      storageBucket: "nd01-60afe.firebasestorage.app",
-      messagingSenderId: "312210165390",
-      appId: "1:312210165390:web:9c9dd8f0846595f9ea83df"
+      projectId: "nd01-60afe"
     };
 
     const app = firebase.initializeApp(firebaseConfig);
@@ -65,7 +62,14 @@
         events: async function(fetchInfo, successCallback, failureCallback) {
           try {
             const snapshot = await db.collection("events").get();
-            const events = snapshot.docs.map(doc => doc.data());
+            const events = snapshot.docs.map(doc => {
+              const data = doc.data();
+              return {
+                title: data.title,
+                start: data.start,
+                end: data.end
+              };
+            });
             successCallback(events);
           } catch (error) {
             console.error("이벤트 불러오기 실패:", error);
