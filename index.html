@@ -70,32 +70,25 @@
     </tbody>
   </table>
 
-  <script>
-    const applyBtn = document.getElementById("applyBtn");
+<script>
+  const applyBtn = document.getElementById("applyBtn");
 
-    fetch("https://worldtimeapi.org/api/timezone/Asia/Seoul")
-      .then(res => res.json())
-      .then(data => {
-        const nowKST = new Date(data.datetime);
+  const now = new Date();
+  const utc = now.getTime() + now.getTimezoneOffset() * 60000;
+  const nowKST = new Date(utc + 9 * 60 * 60 * 1000); // KST 보정
 
-        // 신청 시작/마감일 설정 (한국시간 기준)
-        const startDate = new Date("2025-05-26T00:00:00+09:00");
-        const endDate = new Date("2025-05-27T15:10:00+09:00");
+  const startDate = new Date("2025-05-26T00:00:00+09:00");
+  const endDate = new Date("2025-05-27T15:10:00+09:00");
 
-        if (nowKST >= startDate && nowKST <= endDate) {
-          applyBtn.textContent = "접수중";
-          applyBtn.classList.add("active");
-          applyBtn.href = "https://ndswc01.tistory.com/pages/%EB%82%99%EB%8F%99-%EC%97%AC%EB%A6%84-%EC%BA%A0%ED%94%84-%EC%8B%A0%EC%B2%AD-%ED%8E%98%EC%9D%B4%EC%A7%80";
-          applyBtn.target = "_blank";
-        } else {
-          applyBtn.textContent = "신청마감";
-          applyBtn.classList.add("closed");
-        }
-      })
-      .catch(() => {
-        applyBtn.textContent = "시간 오류";
-        applyBtn.classList.add("closed");
-      });
-  </script>
+  if (nowKST >= startDate && nowKST <= endDate) {
+    applyBtn.textContent = "접수중";
+    applyBtn.classList.add("active");
+    applyBtn.href = "https://ndswc01.tistory.com/pages/%EB%82%99%EB%8F%99-%EC%97%AC%EB%A6%84-%EC%BA%A0%ED%94%84-%EC%8B%A0%EC%B2%AD-%ED%8E%98%EC%9D%B4%EC%A7%80";
+    applyBtn.target = "_blank";
+  } else {
+    applyBtn.textContent = "신청마감";
+    applyBtn.classList.add("closed");
+  }
+</script>
 </body>
 </html>
