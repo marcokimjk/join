@@ -1,8 +1,8 @@
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <title>Ё╚╣© ©╘╦╖ д╥га ╫ец╩</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
     body {
@@ -43,17 +43,15 @@
   </style>
 </head>
 <body>
-  <h2>2025 Ё╚╣© ©╘╦╖ д╥га ╫ец╩</h2>
-
-  <table>
+    <table>
     <thead>
       <tr>
-        <th>╧Ьхё</th>
-        <th>га╥н╠в╥╔юо</th>
-        <th>╫ец╩╠Б╟ё</th>
-        <th>га╥н╠в╥╔</th>
-        <th>╢К╩С</th>
-        <th>╩Себ</th>
+        <th>К╡┬М≤╦</th>
+        <th>М■└К║°Й╥╦К·╗Л²╪</th>
+        <th>Л▀═Л╡╜Й╦╟Й╟└</th>
+        <th>М■└К║°Й╥╦К·╗</th>
+        <th>К▄─Л┐│</th>
+        <th>Л┐│М┐°</th>
       </tr>
     </thead>
     <tbody>
@@ -62,11 +60,11 @@
         <td>2025.06.27 ~ 2025.06.28</td>
         <td>2025-05-26 ~ 2025-06-05</td>
         <td style="text-align: left;">
-          <a style="color: #0033cc; font-weight: bold;" href="https://ndswc01.tistory.com/107">Ё╚╣© ©╘╦╖ д╥га</a>
+          <a style="color: #0033cc; font-weight: bold;" href="https://ndswc01.tistory.com/107">К┌≥К▐≥ Л≈╛К╕└ Л╨═М■└</a>
         </td>
-        <td>аЖ©╙╬ф╣©╪╬ем юл©К ╬ф╣©</td>
+        <td>Л╖─Л≈╜Л∙└К▐≥Л└╪М└╟ Л²╢Л ╘ Л∙└К▐≥</td>
         <td>
-          <a id="applyBtn" class="btn" href="javascript:void(0);">╥н╣Ы аъ...</a>
+          <a id="applyBtn" class="btn" href="javascript:void(0);">К║°К■╘ Л╓▒...</a>
         </td>
       </tr>
     </tbody>
@@ -80,22 +78,21 @@
       .then(data => {
         const nowKST = new Date(data.datetime);
 
-        // ╫ец╩ ╫цюш/╦╤╟╗юо ╪Ёа╓ (гя╠╧╫ц╟ё ╠Баь)
         const startDate = new Date("2025-05-26T00:00:00+09:00");
-        const endDate = new Date("2025-05-27T14:50:59+09:00");
+        const endDate = new Date("2025-05-27T15:00:00+09:00");
 
         if (nowKST >= startDate && nowKST <= endDate) {
-          applyBtn.textContent = "а╒╪Жаъ";
+          applyBtn.textContent = "Л═▒Л┬≤Л╓▒";
           applyBtn.classList.add("active");
           applyBtn.href = "https://ndswc01.tistory.com/pages/%EB%82%99%EB%8F%99-%EC%97%AC%EB%A6%84-%EC%BA%A0%ED%94%84-%EC%8B%A0%EC%B2%AD-%ED%8E%98%EC%9D%B4%EC%A7%80";
           applyBtn.target = "_blank";
         } else {
-          applyBtn.textContent = "╫ец╩╦╤╟╗";
+          applyBtn.textContent = "Л▀═Л╡╜К╖┬Й╟░";
           applyBtn.classList.add("closed");
         }
       })
       .catch(() => {
-        applyBtn.textContent = "╫ц╟ё ©ю╥Ы";
+        applyBtn.textContent = "Л▀°Й╟└ Л≤╓К╔≤";
         applyBtn.classList.add("closed");
       });
   </script>
