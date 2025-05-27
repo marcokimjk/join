@@ -1,10 +1,9 @@
-
 <!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>ë‚™ë™ ì—¬ë¦„ ìº í”„ ì‹ ì²­</title>
+  <title>³«µ¿ ¿©¸§ Ä·ÇÁ ½ÅÃ»</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
     body {
       font-family: sans-serif;
@@ -14,19 +13,19 @@
     table {
       border-collapse: collapse;
       width: 100%;
-      background: white;
-      box-shadow: 0 0 10px rgba(0,0,0,0.05);
+      background: #fff;
+      box-shadow: 0 0 8px rgba(0,0,0,0.05);
     }
     th, td {
       border: 1px solid #ccc;
-      padding: 10px;
+      padding: 12px;
       text-align: center;
     }
     th {
       background-color: #f2f2f2;
     }
     .btn {
-      padding: 6px 12px;
+      padding: 8px 16px;
       border-radius: 5px;
       color: white;
       font-weight: bold;
@@ -44,52 +43,59 @@
   </style>
 </head>
 <body>
-  <h2>2025 ë‚™ë™ ì—¬ë¦„ ìº í”„ ì‹ ì²­</h2>
+  <h2>2025 ³«µ¿ ¿©¸§ Ä·ÇÁ ½ÅÃ»</h2>
+
   <table>
     <thead>
       <tr>
-        <th>ë²ˆí˜¸</th>
-        <th>í”„ë¡œê·¸ë¨ì¼</th>
-        <th>ì‹ ì²­ê¸°ê°„</th>
-        <th>í”„ë¡œê·¸ë¨</th>
-        <th>ëŒ€ìƒ</th>
-        <th>ìƒíƒœ</th>
+        <th>¹øÈ£</th>
+        <th>ÇÁ·Î±×·¥ÀÏ</th>
+        <th>½ÅÃ»±â°£</th>
+        <th>ÇÁ·Î±×·¥</th>
+        <th>´ë»ó</th>
+        <th>»óÅÂ</th>
       </tr>
     </thead>
     <tbody>
       <tr>
-        <td>43</td>
+        <td>1</td>
         <td>2025.06.27 ~ 2025.06.28</td>
-        <td>2025-05-26 ~ 2025-05-27 12:30</td>
-        <td style="text-align: left;"><a style="color: #0033cc; font-weight: bold;" href="#">ë‚™ë™ ì—¬ë¦„ ìº í”„</a></td>
-        <td>ì§€ì—­ì•„ë™ì„¼í„° ì´ìš© ì•„ë™</td>
-        <td><a id="applyBtn" class="btn" href="javascript:void(0);" target="_blank">ë¡œë”©ì¤‘...</a></td>
+        <td>2025-05-26 ~ 2025-06-05</td>
+        <td style="text-align: left;">
+          <a style="color: #0033cc; font-weight: bold;" href="https://ndswc01.tistory.com/107">³«µ¿ ¿©¸§ Ä·ÇÁ</a>
+        </td>
+        <td>Áö¿ª¾Æµ¿¼¾ÅÍ ÀÌ¿ë ¾Æµ¿</td>
+        <td>
+          <a id="applyBtn" class="btn" href="javascript:void(0);">·Îµù Áß...</a>
+        </td>
       </tr>
     </tbody>
   </table>
 
   <script>
+    const applyBtn = document.getElementById("applyBtn");
+
     fetch("https://worldtimeapi.org/api/timezone/Asia/Seoul")
       .then(res => res.json())
       .then(data => {
         const nowKST = new Date(data.datetime);
-        const applyBtn = document.getElementById("applyBtn");
 
-        const start = new Date("2025-05-26T00:00:00+09:00");
-        const end = new Date("2025-05-27T12:30:00+09:00");
+        // ½ÅÃ» ½ÃÀÛ/¸¶°¨ÀÏ ¼³Á¤ (ÇÑ±¹½Ã°£ ±âÁØ)
+        const startDate = new Date("2025-05-26T00:00:00+09:00");
+        const endDate = new Date("2025-05-27T14:50:59+09:00");
 
-        if (nowKST >= start && nowKST <= end) {
-          applyBtn.textContent = "ì ‘ìˆ˜ì¤‘";
+        if (nowKST >= startDate && nowKST <= endDate) {
+          applyBtn.textContent = "Á¢¼öÁß";
           applyBtn.classList.add("active");
           applyBtn.href = "https://ndswc01.tistory.com/pages/%EB%82%99%EB%8F%99-%EC%97%AC%EB%A6%84-%EC%BA%A0%ED%94%84-%EC%8B%A0%EC%B2%AD-%ED%8E%98%EC%9D%B4%EC%A7%80";
+          applyBtn.target = "_blank";
         } else {
-          applyBtn.textContent = "ì‹ ì²­ë§ˆê°";
+          applyBtn.textContent = "½ÅÃ»¸¶°¨";
           applyBtn.classList.add("closed");
         }
       })
       .catch(() => {
-        const applyBtn = document.getElementById("applyBtn");
-        applyBtn.textContent = "ì‹œê°„ì •ë³´ ë¶ˆëŸ¬ì˜¤ê¸° ì‹¤íŒ¨";
+        applyBtn.textContent = "½Ã°£ ¿À·ù";
         applyBtn.classList.add("closed");
       });
   </script>
