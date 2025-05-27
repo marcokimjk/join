@@ -1,0 +1,97 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>낙동 여름 캠프 신청</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 20px;
+      background: #f9f9f9;
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      background: white;
+      box-shadow: 0 0 10px rgba(0,0,0,0.05);
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 10px;
+      text-align: center;
+    }
+    th {
+      background-color: #f2f2f2;
+    }
+    .btn {
+      padding: 6px 12px;
+      border-radius: 5px;
+      color: white;
+      font-weight: bold;
+      text-decoration: none;
+      display: inline-block;
+    }
+    .active {
+      background-color: #ff9900;
+    }
+    .closed {
+      background-color: #999;
+      pointer-events: none;
+      cursor: default;
+    }
+  </style>
+</head>
+<body>
+  <h2>2025 낙동 여름 캠프 신청</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>번호</th>
+        <th>프로그램일</th>
+        <th>신청기간</th>
+        <th>프로그램</th>
+        <th>대상</th>
+        <th>상태</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>43</td>
+        <td>2025.06.27 ~ 2025.06.28</td>
+        <td>2025-05-26 ~ 2025-05-27 12:30</td>
+        <td style="text-align: left;"><a style="color: #0033cc; font-weight: bold;" href="#">낙동 여름 캠프</a></td>
+        <td>지역아동센터 이용 아동</td>
+        <td><a id="applyBtn" class="btn" href="javascript:void(0);" target="_blank">로딩중...</a></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <script>
+    fetch("https://worldtimeapi.org/api/timezone/Asia/Seoul")
+      .then(res => res.json())
+      .then(data => {
+        const nowKST = new Date(data.datetime);
+        const applyBtn = document.getElementById("applyBtn");
+
+        const start = new Date("2025-05-26T00:00:00+09:00");
+        const end = new Date("2025-05-27T12:30:00+09:00");
+
+        if (nowKST >= start && nowKST <= end) {
+          applyBtn.textContent = "접수중";
+          applyBtn.classList.add("active");
+          applyBtn.href = "https://ndswc01.tistory.com/pages/%EB%82%99%EB%8F%99-%EC%97%AC%EB%A6%84-%EC%BA%A0%ED%94%84-%EC%8B%A0%EC%B2%AD-%ED%8E%98%EC%9D%B4%EC%A7%80";
+        } else {
+          applyBtn.textContent = "신청마감";
+          applyBtn.classList.add("closed");
+        }
+      })
+      .catch(() => {
+        const applyBtn = document.getElementById("applyBtn");
+        applyBtn.textContent = "시간정보 불러오기 실패";
+        applyBtn.classList.add("closed");
+      });
+  </script>
+</body>
+</html>
