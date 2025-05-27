@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>낙동 여름 캠프 신청</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 20px;
+      background: #f9f9f9;
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      background: #fff;
+      box-shadow: 0 0 8px rgba(0,0,0,0.05);
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 12px;
+      text-align: center;
+    }
+    th {
+      background-color: #f2f2f2;
+    }
+    .btn {
+      padding: 8px 16px;
+      border-radius: 5px;
+      color: white;
+      font-weight: bold;
+      text-decoration: none;
+      display: inline-block;
+    }
+    .active {
+      background-color: #ff9900;
+    }
+    .closed {
+      background-color: #999;
+      pointer-events: none;
+      cursor: default;
+    }
+  </style>
+</head>
+<body>
+  <h2>2025 낙동 여름 캠프 신청</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>번호</th>
+        <th>프로그램일</th>
+        <th>신청기간</th>
+        <th>프로그램</th>
+        <th>대상</th>
+        <th>상태</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td>2025.06.27 ~ 2025.06.28</td>
+        <td>2025-05-26 ~ 2025-06-05</td>
+        <td style="text-align: left;">
+          <a style="color: #0033cc; font-weight: bold;" href="https://ndswc01.tistory.com/107">낙동 여름 캠프</a>
+        </td>
+        <td>지역아동센터 이용 아동</td>
+        <td>
+          <a id="applyBtn" class="btn" href="javascript:void(0);">로딩 중...</a>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <script>
+    const applyBtn = document.getElementById("applyBtn");
+
+    fetch("https://worldtimeapi.org/api/timezone/Asia/Seoul")
+      .then(res => res.json())
+      .then(data => {
+        const nowKST = new Date(data.datetime);
+
+        // 신청 시작/마감일 설정 (한국시간 기준)
+        const startDate = new Date("2025-05-26T00:00:00+09:00");
+        const endDate = new Date("2025-05-27T14:50:59+09:00");
+
+        if (nowKST >= startDate && nowKST <= endDate) {
+          applyBtn.textContent = "접수중";
+          applyBtn.classList.add("active");
+          applyBtn.href = "https://ndswc01.tistory.com/pages/%EB%82%99%EB%8F%99-%EC%97%AC%EB%A6%84-%EC%BA%A0%ED%94%84-%EC%8B%A0%EC%B2%AD-%ED%8E%98%EC%9D%B4%EC%A7%80";
+          applyBtn.target = "_blank";
+        } else {
+          applyBtn.textContent = "신청마감";
+          applyBtn.classList.add("closed");
+        }
+      })
+      .catch(() => {
+        applyBtn.textContent = "시간 오류";
+        applyBtn.classList.add("closed");
+      });
+  </script>
+</body>
+</html>
