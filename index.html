@@ -78,8 +78,9 @@
       .then(data => {
         const nowKST = new Date(data.datetime);
 
+        // 신청 시작/마감일 설정 (한국시간 기준)
         const startDate = new Date("2025-05-26T00:00:00+09:00");
-        const endDate = new Date("2025-05-27T15:00:00+09:00");
+        const endDate = new Date("2025-05-27T15:10:00+09:00");
 
         if (nowKST >= startDate && nowKST <= endDate) {
           applyBtn.textContent = "접수중";
