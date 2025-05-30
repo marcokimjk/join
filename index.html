@@ -1,76 +1,205 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-  <meta charset="UTF-8">
-  <title>일정표</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- Chart.js + Firebase SDK -->
 
-  <!-- FullCalendar -->
-  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.css" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-  <!-- ✅ Firebase v8 방식으로 교체 -->
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
 
-  <style>
-    body {
-      font-family: sans-serif;
-      background: #f2f2f2;
-      padding: 20px;
-    }
-    h2 {
-      text-align: center;
-      color: #333;
-    }
-    #calendar {
-      max-width: 900px;
-      margin: 30px auto;
-      background: white;
-      padding: 10px;
-      border-radius: 10px;
-    }
-  </style>
-</head>
-<body>
+<script>Chart.register(ChartDataLabels);</script>
 
-  <h2>일정표</h2>
-  <div id="calendar"></div>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
 
-  <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyAOcSy7hE3jX-ajDLUuU_J7q7TjJtqh24s",
-      authDomain: "nd01-60afe.firebaseapp.com",
-      projectId: "nd01-60afe"
-    };
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
 
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
+<h1 style="text-align:center;">2025년 낙동지역아동센터 선거 개표</h1>
+<h3 style="text-align:center;">⏳ 새로고침까지: <span id="countdown">10</span>초</h3>
 
-    document.addEventListener('DOMContentLoaded', function () {
-      const calendarEl = document.getElementById('calendar');
-      const calendar = new FullCalendar.Calendar(calendarEl, {
-        initialView: 'dayGridMonth',
-        locale: 'ko',
-        headerToolbar: {
-          left: 'prev,next today',
-          center: 'title',
-          right: 'dayGridMonth,listMonth'
+<div id="chartContainer">
+  <div class="chartBox">
+    <h2>의장</h2>
+    <canvas id="chartPresident"></canvas>
+  </div>
+  <div class="chartBox">
+    <h2>부의장 (송지아)</h2>
+    <canvas id="chartVice"></canvas>
+  </div>
+  <div class="chartBox">
+    <h2>서기 (2명 선출)</h2>
+    <canvas id="chartClerk"></canvas>
+  </div>
+</div>
+
+<h3 style="text-align:center;">현재 누적 개표 수: <span id="voteCount">0</span>/35명</h3>
+
+<style>
+  #chartContainer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+    margin-top: 30px;
+  }
+  .chartBox {
+    flex: 1 1 300px;
+    max-width: 400px;
+  }
+  canvas {
+    width: 100%;
+    height: 300px !important;
+  }
+  h2 {
+    text-align: center;
+    margin-bottom: 10px;
+  }
+</style>
+
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyAOcSy7hE3jX-ajDLUuU_J7q7TjJtqh24s",
+    authDomain: "nd01-60afe.firebaseapp.com",
+    databaseURL: "https://nd01-60afe-default-rtdb.firebaseio.com",
+    projectId: "nd01-60afe",
+    storageBucket: "nd01-60afe.appspot.com",
+    messagingSenderId: "312210165390",
+    appId: "1:312210165390:web:9c9dd8f0846595f9ea83df"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+
+  const totalVotesExpected = 35;
+  const majority = Math.floor(totalVotesExpected / 2) + 1;
+
+  const nameMap = {
+    "의장": { 1: "정행복", 2: "최지훈" },
+    "부의장": { 1: "찬성", 2: "반대" },
+    "서기": { 1: "박혜란", 2: "안다솔", 3: "이수빈", 4: "이향기", 5: "김장미" }
+  };
+
+  const tallies = {
+    "의장": { "정행복": 0, "최지훈": 0 },
+    "부의장": { "찬성": 0, "반대": 0 },
+    "서기": { "박혜란": 0, "안다솔": 0, "이수빈": 0, "이향기": 0, "김장미": 0 }
+  };
+
+  let clerkWinners = [];
+
+  const chartPres = new Chart(document.getElementById("chartPresident"), getConfig(["정행복", "최지훈"], "의장"));
+  const chartVice = new Chart(document.getElementById("chartVice"), getConfig(["찬성", "반대"], "부의장"));
+  const chartClerk = new Chart(document.getElementById("chartClerk"), getConfig(["박혜란", "안다솔", "이수빈", "이향기", "김장미"], "서기"));
+
+  function getConfig(labels, role) {
+    return {
+      type: "bar",
+      data: {
+        labels: labels,
+        datasets: [{
+          data: labels.map(() => 0),
+          backgroundColor: labels.map(() => "gray")
+        }]
+      },
+      options: {
+        responsive: true,
+        animation: false,
+        layout: { padding: { top: 50 } },
+        plugins: {
+          datalabels: {
+            anchor: 'end',
+            align: 'top',
+            formatter: (value, ctx) => {
+              const totalVotes = Number(document.getElementById("voteCount").innerText);
+              const percent = ((value / totalVotesExpected) * 100).toFixed(1);
+              const label = ctx.chart.data.labels[ctx.dataIndex];
+              let status = "";
+
+              if (role === "의장") {
+                const other = ctx.dataIndex === 0 ? ctx.chart.data.datasets[0].data[1] : ctx.chart.data.datasets[0].data[0];
+                if (value >= majority) status = "\n당선";
+              } else if (role === "부의장") {
+                const 반대 = ctx.chart.data.datasets[0].data[ctx.chart.data.labels.indexOf("반대")];
+                if (label === "찬성") {
+                  if (value >= majority) status = "\n당선";
+                }
+              } else if (role === "서기") {
+                if (totalVotes >= 35 && clerkWinners.includes(label)) status = "\n당선";
+              }
+              return `${value}표 (${percent}%)${status}`;
+            },
+            color: function(ctx) {
+              const value = ctx.dataset.data[ctx.dataIndex];
+              const totalVotes = Number(document.getElementById("voteCount").innerText);
+              const label = ctx.chart.data.labels[ctx.dataIndex];
+              const dataset = ctx.dataset.data;
+              const maxValue = Math.max(...dataset);
+              const sameAsMax = dataset.filter(v => v === maxValue).length > 1;
+
+              if ((ctx.chart.canvas.id === "chartPresident" && value >= majority) ||
+                  (ctx.chart.canvas.id === "chartVice" && label === "찬성" && value >= majority) ||
+                  (ctx.chart.canvas.id === "chartClerk" && clerkWinners.includes(label))) {
+                return "red";
+              }
+              return "black";
+            }
+          },
+          legend: { display: false }
         },
-        events: function(fetchInfo, successCallback, failureCallback) {
-          db.collection("events").get().then(snapshot => {
-            const events = snapshot.docs.map(doc => doc.data());
-            successCallback(events);
-          }).catch(err => {
-            console.error("이벤트 불러오기 실패:", err);
-            failureCallback(err);
-          });
+        scales: {
+          y: { beginAtZero: true, ticks: { display: false }, grid: { display: false } },
+          x: { grid: { display: false } }
         }
-      });
+      },
+      plugins: [ChartDataLabels]
+    };
+  }
 
-      calendar.render();
+  function updateCharts() {
+    const roles = ["의장", "부의장", "서기"];
+    [chartPres, chartVice, chartClerk].forEach((chart, index) => {
+      const role = roles[index];
+      const labels = chart.data.labels;
+      chart.data.datasets[0].data = labels.map(label => tallies[role][label]);
+      chart.update();
     });
-  </script>
+  }
 
-</body>
-</html>
+  db.ref("votes").once("value").then(snapshot => {
+    const raw = snapshot.val() || {};
+    const votesArray = Object.values(raw);
+    document.getElementById("voteCount").innerText = votesArray.length;
+
+    votesArray.forEach(vote => {
+      const p = nameMap["의장"]?.[vote["의장"]];
+      const v = nameMap["부의장"]?.[vote["부의장"]];
+      const cList = vote["서기"] ? Object.values(vote["서기"]).map(num => nameMap["서기"][num]) : [];
+
+      if (p) tallies["의장"][p]++;
+      if (v) tallies["부의장"][v]++;
+      cList.forEach(c => {
+        if (c) tallies["서기"][c]++;
+      });
+    });
+
+    if (votesArray.length >= 35) {
+      const sortedClerks = Object.entries(tallies["서기"]).sort((a, b) => b[1] - a[1]);
+      const first = sortedClerks[0];
+      const second = sortedClerks[1];
+      const third = sortedClerks[2];
+      if (second[1] !== third[1]) {
+        clerkWinners = [first[0], second[0]];
+      } else {
+        clerkWinners = [];
+      }
+    }
+
+    updateCharts();
+  });
+
+  let countdown = 10;
+  const countdownEl = document.getElementById("countdown");
+  const timer = setInterval(() => {
+    countdown--;
+    countdownEl.innerText = countdown;
+    if (countdown <= 0) {
+      clearInterval(timer);
+      location.reload();
+    }
+  }, 1000);
+</script>
